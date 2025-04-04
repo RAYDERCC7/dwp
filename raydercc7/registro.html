@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - La Texicana</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="login.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</head>
+<body>
+
+    <div class="register-container">
+        <h2>Registro</h2>
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="fullname">Nombre Completo:</label>
+                <input type="text" id="fullname" name="fullname" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Correo Electrónico:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirmar Contraseña:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+            </div>
+            <div class="form-group">
+                <div class="g-recaptcha" data-sitekey="6LfCrQkrAAAAAMIt-O0DIhuWFMc_vbNTE9BVB9C5"></div>
+            </div>
+            <button type="submit">Registrarse</button>
+        </form>
+        <p><a href="login.html">¿Ya tienes cuenta? Inicia sesión</a></p>
+        <p><a href="index.php">Volver al inicio</a></p>
+    </div>
+
+    <script>
+       document.getElementById("registerForm").addEventListener("submit", function(event) {
+    event.preventDefault(); // Evita la recarga de página
+
+    let formData = new FormData(this);
+    formData.append('g-recaptcha-response', grecaptcha.getResponse()); // Agregar la respuesta del reCAPTCHA
+
+    fetch("registro.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            Swal.fire({
+                icon: "success",
+                title: "Registro Exitoso",
+                text: data.message
+            }).then(() => {
+                window.location.href = "login.html"; // Redirige al login
+            });
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: data.message
+            });
+        }
+    })
+    .catch(error => {
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Hubo un problema con la solicitud."
+        });
+    });
+});
+    </script>
+    
+
+</body>
+</html>
